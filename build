@@ -1,0 +1,3 @@
+javac -source 1.8 -target 1.8 -d out/ src/viewport/*.java -bootclasspath /Applications/Processing.app/Contents/PlugIns/jdk1.8.0_202.jdk/Contents/Home/jre/lib/rt.jar -classpath /Applications/Processing.app/Contents/Java/core.jar -Xlint 
+
+jar -cf library/viewport.jar -C out .
