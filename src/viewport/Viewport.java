@@ -12,6 +12,10 @@ public class Viewport {
   public boolean dragging, mouseEnabled = true;
   public float contentWidth, contentHeight;
   public float minScale = 0.5f, maxScale = 40.0f;
+  public boolean enableDragging = true;
+  PVector contentTopLeftInScreenCoords = new PVector();
+  PVector contentBottomRightInScreenCoords = new PVector();
+  public float toScreenScale;
 
   public Viewport(PApplet applet, int x, int y, int w, int h, int contentWidth, int contentHeight) {
     p = applet;
@@ -36,6 +40,16 @@ public class Viewport {
     p.translate(bounds.width/2, bounds.height/2); //center in viewport
     p.scale(PApplet.min((float)(bounds.width)/contentWidth, (float)(bounds.height)/contentHeight)); //scale to fit content
     p.translate(-contentWidth/2, -contentHeight/2); //imageMode center
+
+    contentTopLeftInScreenCoords.set(new PVector(p.screenX(0, 0), p.screenY(0, 0)));
+    contentBottomRightInScreenCoords.set(new PVector(p.screenX(contentWidth, contentHeight), p.screenY(contentWidth, contentHeight)));
+    toScreenScale = 1 / (scale * PApplet.min(bounds.width/contentWidth, bounds.height/contentHeight));
+  }
+
+  PVector fromScreenToView(float x, float y) {
+    x = PApplet.map(x, contentTopLeftInScreenCoords.x, contentBottomRightInScreenCoords.x, 0, contentWidth);
+    y = PApplet.map(y, contentTopLeftInScreenCoords.y, contentBottomRightInScreenCoords.y, 0, contentHeight);
+    return new PVector(x, y);
   }
 
   public void end() {
@@ -44,6 +58,7 @@ public class Viewport {
   }
 
   private void mouseDragged() {
+    if (!enableDragging) return;
     x -= (mouseX-pmouseX)/scale;
     y -= (mouseY-pmouseY)/scale;
   }
